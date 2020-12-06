@@ -1,0 +1,15 @@
+{% extends 'base/project_base.html' %}
+{% block page_content %}
+
+	<h1>Welcome!</h1> 
+	<div>You are logged in as</div>
+	<ul>
+		<li><b>Username:</b> {{request.user.username}}</li>
+		<li><b>Email:</b> {{request.user.email}}</li>
+	</ul>
+
+	<div><a href="{% url 'session_manager_profile_reset_password' %}">Reset password</a></div>
+	<div><a href="{% url 'session_manager_logout' %}">Log out</a></div>
+
+{% endblock %}
+
