@@ -1,0 +1,12 @@
+<div class="col-6">
+	<div class="dashboard-team status-border status-border-{{team.teamstatus}}">
+		<div class="dashboard-team_status">
+			<div class="dashboard-team_name">{{team.name}}</div>
+			<div class="dashboard-team_status">{{team.teamstatus}}
+			</div>
+		</div>
+		<a class="dashboard-team_details dashboard-team_details_{{team.teamstatus}} bg-{{team.teamstatus}}" 
+			href="{% url 'team_lead_dashboard' team_uuid=team.uuid %}">
+		View</a>
+	</div>
+</div>

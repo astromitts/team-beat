@@ -1,0 +1,42 @@
+{% extends 'base/project_base.html' %}
+{% load static %}
+
+
+{% block page_content %}
+	<h2 class="h2">Team Status For Today</h2>
+	{% for status in statuses %}
+		<div class="row">
+			<div class="col">
+				<div class="adminteam-status status-border status-border-{{status.status}} dashboard-team">
+					<div class="adminteam-status_colorcode bg-{{status.status}}"></div>
+					<div class="adminteam-status_status">
+						<div class="adminteam-status_details as-table">
+							<div class="as-row as-header align-center bg-{{status.status}}">
+								<div class="as-cell adminteam-status_name">
+									<div>{{status.teammember.display_name}}</div>
+								</div>
+							</div>
+							<div class="as-row">
+								<div class="as-cell padding_p5">
+									<div class="spacer_1">{{status.status}}</div>
+									{% if status.additional_info_for_team %}
+										<div>
+											<div class="as-header">Additional infor for team</div>
+											{{status.additional_info_for_team}}
+										</div>
+									{% endif %}
+									{% if status.additional_info_for_lead %}
+									<div>
+										<div class="as-header">Additional infor for you</div>
+										{{status.additional_info_for_lead}}
+									</div>
+									{% endif %}
+								</div>
+							</div>
+						</div>
+					</div>	
+				</div>
+			</div>
+		</div>
+	{% endfor %}
+{% endblock %}

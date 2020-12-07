@@ -1,0 +1,22 @@
+<div class="col-6 admin">
+	<div class="dashboard-team status-border status-border-{{teammember.status_for_today.status}}">
+		<div class="dashboard-team_status">
+			<div class="dashboard-team_name">{{team.name}}</div>
+			<div class="">			
+				{% if teammember.status_for_today %}
+					Your status for today is: {{teammember.status_for_today.status}}
+				{% else %}
+					You need to set your status for today.
+				{% endif %}
+			</div>
+		</div>
+		<a class="dashboard-team_details dashboard-team_details_{{team.teamstatus}} bg-{{teammember.status_for_today.status}}" 
+			href="{% url 'teams_set_status' team_uuid=team.uuid %}">
+			{% if teammember.status_for_today %}
+				Change Status
+			{% else %}
+				Set Status
+			{% endif %}
+		</a>
+	</div>
+</div>

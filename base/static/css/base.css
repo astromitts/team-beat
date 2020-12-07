@@ -1,6 +1,211 @@
+/* Django overrides */
+ul.errorlist {
+  list-style-type: none;
+  padding-inline-start: 0;
+  background-color: #EA6E6E;
+  padding: 1rem;
+  border-radius: 8px;
+  border: 1px solid red;
+}
+
 /* Bootstrap overrides */
+.navbar-custom {
+  background-color: #2A439E !important;
+  background-image: linear-gradient(to bottom, #2A439E, #ffffff);
+}
+.navbar-custom a {
+  font-weight: bold;
+  color: #712488 !important;
+}
+.navbar-custom a.nav-link {
+  margin-top: 1.5rem;
+}
+
+img#header-image {
+  width: 8rem;
+}
+@media (min-width: 768px) {
+  img#header-image {
+    width: 12rem;
+  }
+}
+
+img#profile-image {
+  width: 4rem;
+  margin-top: 1.5rem;
+}
+
 ol.breadcrumb {
   background-color: #FFFFFF;
+}
+
+span.helptext {
+  display: block;
+  font-style: italic;
+  font-size: 0.8rem;
+}
+span.helptext_required {
+  color: red;
+}
+
+.choices-inline {
+  display: inline;
+}
+.choices-inline li {
+  display: inline;
+}
+
+h2 {
+  font-size: 1rem !important;
+  color: #757575 !important;
+}
+
+.btn {
+  box-shadow: 1px 1px 4px #2A439E;
+}
+.btn-primary {
+  background-color: #2A439E !important;
+}
+.btn-warning {
+  background-color: #E6E668 !important;
+}
+.btn-danger {
+  background-color: #EA6E6E !important;
+}
+.btn-success {
+  background-color: #6ECA6E !important;
+}
+
+/* App Styles */
+#main-content {
+  margin-top: 1.5rem;
+}
+
+.js-data {
+  display: none;
+}
+
+.hide-on-small {
+  display: none;
+}
+@media (min-width: 768px) {
+  .hide-on-small {
+    display: block;
+  }
+}
+
+.spacer_p5 {
+  margin-bottom: 0.5rem;
+}
+
+.spacer_1 {
+  margin-bottom: 1.5rem;
+}
+
+.padding_p5 {
+  padding: 0.5rem;
+}
+
+.align-center {
+  text-align: center;
+}
+
+.bg-red {
+  background-color: #EA6E6E;
+}
+
+.bg-yellow {
+  background-color: #E6E668;
+}
+
+.bg-green {
+  background-color: #6ECA6E;
+}
+
+.bg-null {
+  background-color: #D4D4D4;
+}
+
+.as-table {
+  display: table;
+  width: 100%;
+}
+.as-table .as-row {
+  display: table-row;
+}
+.as-table .as-cell {
+  display: table-cell;
+}
+
+.as-header {
+  font-weight: bold;
+}
+
+.status-border {
+  border: solid 3px #D4D4D4;
+  border-right: 4px solid #D4D4D4;
+}
+.status-border-red {
+  border-color: #EA6E6E !important;
+}
+.status-border-yellow {
+  border-color: #E6E668 !important;
+}
+.status-border-green {
+  border-color: #6ECA6E !important;
+}
+.status-border-selected {
+  border-color: #000000 !important;
+}
+
+.dashboard-team {
+  border: solid 3px #D4D4D4;
+  border-right: 4px solid #D4D4D4;
+  box-shadow: 2px 2px 4px #2A439E;
+  border-radius: 5px;
+  margin-bottom: 1.5rem;
+}
+.dashboard-team_status {
+  padding: 1rem 0.25rem;
+}
+.dashboard-team a.dashboard-team_details {
+  display: block;
+  width: 100%;
+  padding: 0.5rem 0;
+  text-align: center;
+  color: #000000;
+  font-weight: bold;
+}
+.dashboard-team a.dashboard-team_details:hover {
+  text-decoration: none;
+}
+
+.dashboardteam-status {
+  min-height: 5rem;
+  padding: 0;
+  margin-bottom: 1rem;
+}
+.dashboardteam-status_status {
+  display: inline-block;
+  vertical-align: top;
+}
+.dashboardteam-status_details {
+  display: block;
+}
+.dashboardteam-status_colorcode {
+  display: inline-block;
+  width: 3rem;
+  min-height: 6rem;
+}
+.dashboardteam-status_name {
+  min-width: 5rem;
+  font-weight: bold;
+}
+
+.status_select-card {
+  border: 3px solid #D4D4D4;
+  padding: 1.25rem 0.5rem;
+  margin-bottom: 2rem;
 }
 
 /*# sourceMappingURL=base.css.map */

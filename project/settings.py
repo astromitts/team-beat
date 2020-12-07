@@ -38,9 +38,9 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
-    'crispy_forms',
     'session_manager',
     'base',
+    'teambeat',
 ]
 
 MIDDLEWARE = [
@@ -80,8 +80,11 @@ WSGI_APPLICATION = 'project.wsgi.application'
 
 DATABASES = {
     'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': str(BASE_DIR / 'db.sqlite3'),
+        'ENGINE': 'django.db.backends.postgresql_psycopg2',
+        'NAME': 'teambeat',
+        'USER': 'bomorin-id',
+        'HOST': '127.0.0.1',
+        'PORT': '5432'
     }
 }
 
@@ -131,13 +134,12 @@ AUTHENTICATION_EXEMPT_VIEWS = [
     'resetpassword',
 ]
 
-MIDDLEWARE_DEBUG = False
+MIDDLEWARE_DEBUG = True
 
 # override these to redirect to customized templates
 AUTHENTICATION_REQUIRED_REDIRECT = 'session_manager_login'
-LOGIN_SUCCESS_REDIRECT = 'session_manager_profile'
+LOGIN_SUCCESS_REDIRECT = 'dashboard'
 PW_RESET_SUCCESS_REDIRECT = 'session_manager_profile'
 DEFAULT_ERROR_TEMPLATE = 'session_manager/error.html'
 
 HOST = '127.0.0.1:8000'
-CRISPY_TEMPLATE_PACK = 'bootstrap3'

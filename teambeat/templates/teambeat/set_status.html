@@ -1,0 +1,42 @@
+{% extends 'base/project_base.html' %}
+{% load static %}
+
+{% block extra_js %}
+	<script src="{% static 'js/setStatus.js' %}"></script>
+{% endblock %}
+
+{% block page_content %}
+	<h2 class="h2">Set Status For Today</h2>
+	{% for status, meta in status_options.items %}
+		<div class="row status_select">
+			<div class="col">
+				<div class="status_select-card status-border status-border-{{status}} {% if existing_status and existing_status.status == status %}status-border-selected{% endif %}" id="status-card_{{status}}" data-selected-status="{{status}}">
+					{{meta.help_text}}
+				</div>
+			</div>
+		</div>
+	{% endfor %}
+	<div class="row">
+		<div class="col">
+			<button id="confirm-status" {% if not existing_status %}disabled="disabled"{% endif %} class="btn btn-primary form-control spacer_1">Confirm Status</button>
+		</div>
+	</div>
+	<div class="row" id="submit-form" {% if not existing_status %}style="display: none;"{% endif %}>
+		<div class="col">
+			<form method="POST" action="">
+				{% csrf_token %}
+
+				<input type="hidden" name="selected-status" id="selected-status" value="{{existing_status.status}}"/>
+				<label>Anything else your teammates should know?</label>
+				<span class="helptext">This information will be visibile to your teammates and your team lead</span>
+				<textarea name="status-additional-info-team" id="status-additional-info-team" class="form-control spacer_1">{{existing_status.additional_info_for_team}}</textarea>
+				
+				<label>Anything else your team lead should know?</label>
+				<span class="helptext">This information will be visibile only to your team lead</span>
+				<span class="helptext helptext_required" id="red-yellow-required" style="display: none;">Required if you are red or yellow</span>
+				<textarea name="status-additional-info-lead" id="status-additional-info-lead" class="form-control spacer_1">{{existing_status.additional_info_for_lead}}</textarea>
+				<input type="submit" value="Submit Status" class="btn btn-success form-control spacer_1" />
+			</form>
+		</div>
+	</div>
+{% endblock %}

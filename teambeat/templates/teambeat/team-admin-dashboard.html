@@ -1,0 +1,103 @@
+{% extends 'base/project_base.html' %}
+{% load static apptags %}
+{% block extra_js %}
+	<script src="{% static 'js/modalHandler.js' %}"></script>
+{% endblock %}
+
+{% block page_content %}
+	<div class="row">
+		<div class="col">
+			<h2>Admin Dashboard: {{team.name}}</h2>
+		</div>
+	</div>
+
+	<div class="row">
+		<div class="col">
+			<h3>Team Leads</h3>
+		</div>
+	</div>
+	<div class="row">
+		<div class="col">
+			<table class="table">
+				<tr id="teamlead-row">
+					{% include 'teambeat/includes/team-admin-dashboard/teamlead-row.html' %}
+				</tr>
+				<tr>
+					<td colspan="100%">
+						<button
+							class="js-modal-trigger btn btn-primary float-right" 
+							data-modal-id="modal_user-search"
+							data-js-handler="handleUserSearchModal"
+							data-ajax-target="{% url 'api_user_search' %}"
+							data-result-target-handler="handleChangeLeadOnTeam"
+							data-result-target-url="{% url 'team_admin_dashboard_api' team_uuid=team.uuid api_target='changeteamlead' %}"
+							>Change Team Lead</button>
+					</td>
+				</tr>
+			</table>
+		</div>
+	</div>
+
+
+	<div class="row">
+		<div class="col">
+			<h3>Team Members</h3>
+		</div>
+	</div>
+	<div class="row">
+		<div class="col">
+			<table class="table" id="teammember-rows">
+				{% for teammember in teammembers.all %}
+					{% include 'teambeat/includes/team-admin-dashboard/teammember-row.html' %}
+				{% endfor %}
+				<tr>
+					<td colspan="100%">
+						<button
+							class="js-modal-trigger btn btn-primary float-right" 
+							data-modal-id="modal_user-search"
+							data-js-handler="handleUserSearchModal"
+							data-ajax-target="{% url 'api_user_search' %}"
+							data-result-target-handler="handleAddUserToTeam"
+							data-result-target-url="{% url 'team_admin_dashboard_api' team_uuid=team.uuid api_target='addteammember' %}"
+							>Add Team Member</button>
+					</td>
+				</tr>
+			</table>
+		</div>
+	</div>
+
+	<div class="row">
+		<div class="col">
+			
+		</div>
+	</div>
+
+	<div class="row">
+		<div class="col">
+			<h3>Team Admins</h3>
+		</div>
+	</div>
+	<div class="row">
+		<div class="col">
+			<table class="table" id="teamadmin-rows">
+				{% for admin in team_admins.all %}
+					{% include 'teambeat/includes/team-admin-dashboard/teamadmin-row.html' %}
+				{% endfor %}
+					<tr>
+						<td colspan="100%">
+							<button
+								class="js-modal-trigger btn btn-primary float-right" 
+								data-modal-id="modal_user-search"
+								data-js-handler="handleUserSearchModal"
+								data-ajax-target="{% url 'api_user_search' %}"
+								data-result-target-handler="handleAddAdminToTeam"
+								data-result-target-url="{% url 'team_admin_dashboard_api' team_uuid=team.uuid api_target='addteamadmin' %}"
+								>Add Team Admin</button>
+						</td>
+					</tr>
+			</table>
+		</div>
+	</div>
+	{% include 'teambeat/modals/modal-remove-teammember.html' %}
+	{% include 'teambeat/modals/modal-user-search.html' with form=user_search_form %}
+{% endblock %}

@@ -33,18 +33,26 @@ class SessionManager(models.Model):
         return User.objects.filter(username__iexact=username).first()
 
     @classmethod
+    def search(cls, email):
+        """ Retrieve User if one with a matching username exists
+        """
+        return User.objects.filter(email__icontains=email).all()
+
+    @classmethod
     def get_user_by_id(cls, pk):
         """ Get the User of given primary key
         """
         return User.objects.get(pk=pk)
 
     @classmethod
-    def create_user(cls, email, username, password):
+    def create_user(cls, email, first_name, last_name, password):
         """ Create a new User instance, set the password and return the User object
         """
         new_user = User(
             email=email,
-            username=username,
+            username=email,
+            first_name=first_name,
+            last_name=last_name,
         )
         new_user.save()
         new_user.set_password(password)

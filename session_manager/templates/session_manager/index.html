@@ -1,13 +1,19 @@
 {% extends 'base/project_base.html' %}
 {% block page_content %}
-
-	<h1>Welcome!</h1> 
-	<div>You are logged in as</div>
-	<ul>
-		<li><b>Username:</b> {{request.user.username}}</li>
-		<li><b>Email:</b> {{request.user.email}}</li>
-	</ul>
-
+	
+	<div class="row">
+		<div class="col">
+			<form method="POST" action="">
+				{% csrf_token %}
+				<table class="table">
+					{{form.as_table}}
+				<tr>
+					<td></td>
+					<td><input type="submit" class="btn btn-primary" value="Update Profile" /></td>
+				</tr>
+			</form>
+		</div>
+	</div>
 	<div><a href="{% url 'session_manager_profile_reset_password' %}">Reset password</a></div>
 	<div><a href="{% url 'session_manager_logout' %}">Log out</a></div>
 

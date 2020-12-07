@@ -1,0 +1,49 @@
+{% extends 'base/project_base.html' %}
+{% load static apptags %}
+{% block js_data %}
+	<input type="hidden" name="js-refresh-url" id="js-refresh-url" value="{% url 'dashboard_refresh_api' %}"/>
+{% endblock %}
+{% block extra_js %}
+	<script src="{% static 'js/dashboard/dashboard.js' %}"></script>
+{% endblock %}
+{% block page_content %}
+	<div class="row dashboard">
+		<div class="col">
+			<h2>My Status</h2>
+		</div>
+	</div>
+	<div class="row spacer_p5" id="myteams">
+		{% for teammember in myteams %}
+			{% include 'teambeat/includes/dashboard-team-card.html' with team=teammember.team teammember=teammember %}
+		{% endfor %}
+	</div>
+	<hr />
+	
+	<div class="row dashboard">
+		<div class="col">
+			<h2>Team Lead Dashboards</h2>
+		</div>
+	</div>
+	<div class="row spacer_p5" id="adminteams">
+		{% for team in leadteams %}
+			{% include 'teambeat/includes/dashboard-lead-card.html' with team=team %}
+		{% endfor %}
+	</div>
+	<hr />
+
+	<div class="row dashboard">
+		<div class="col">
+			<h2>Team Admin Dashboards</h2>
+		</div>
+	</div>
+	<div class="row spacer_p5" id="adminteams">
+		{% for teamadmin in adminteams %}
+			{% include 'teambeat/includes/dashboard-admin-card.html' with team=teamadmin.team %}
+		{% endfor %}
+	</div>
+	<div class="row spacer_p5" id="newteam">
+		<div class="col">
+			<a href="{% url 'teams_create' %}"><button class="btn btn-primary form-control">New Team</button></a>
+		</div>
+	</div>
+{% endblock %}

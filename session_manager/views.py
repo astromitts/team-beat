@@ -2,6 +2,7 @@ from django.conf import settings
 from django.contrib import messages
 from django.contrib.auth import login, logout, REDIRECT_FIELD_NAME
 from django.contrib.auth.views import redirect_to_login
+from django.contrib.auth.models import User
 from django.core.exceptions import PermissionDenied
 from django.http import HttpResponse
 from django.shortcuts import render, redirect, resolve_url
@@ -11,7 +12,13 @@ from django.urls import reverse
 
 from urllib.parse import urlparse
 
-from session_manager.forms import CreateUserForm, LoginUserForm, ResetPasswordForm
+from session_manager.forms import (
+    CreateUserForm,
+    LoginUserForm,
+    ResetPasswordForm,
+    UserProfileForm
+)
+
 from session_manager.models import SessionManager, UserToken
 
 
@@ -33,20 +40,14 @@ class CreateUserView(View):
     def post(self, request, *args, **kwargs):
         form = CreateUserForm(request.POST)
         if form.is_valid():
-            if SessionManager.user_exists(email=request.POST['email']):
-                messages.error(request, 'A user with this email address already exists.')
-                self.context.update({
-                    'form': form,
-                })
-                return HttpResponse(self.template.render(self.context, request))
-            else:
-                user = SessionManager.create_user(
-                    email=request.POST['email'],
-                    username=request.POST['username'],
-                    password=request.POST['password']
-                )
-                messages.success(request, 'Registration complete! Please log in to continue.')
-                return redirect(reverse('session_manager_login'))
+            user = SessionManager.create_user(
+                email=request.POST['email'],
+                password=request.POST['password'],
+                first_name=request.POST['first_name'],
+                last_name=request.POST['last_name']
+            )
+            messages.success(request, 'Registration complete! Please log in to continue.')
+            return redirect(reverse('session_manager_login'))
         else:
             self.context.update({
                 'form': form,
@@ -97,7 +98,7 @@ class LoginUserView(View):
         form = LoginUserForm(request.POST)
         if form.is_valid():
             user, error_reason = SessionManager.check_user_login(
-                username_or_email=request.POST['username_or_email'],
+                username_or_email=request.POST['email'],
                 password=request.POST['password']
             )
             if not user:
@@ -211,6 +212,38 @@ class LogOutUserView(View):
 class Index(View):
     def get(self, request, *args, **kwargs):
         template = loader.get_template('session_manager/index.html')
-        return HttpResponse(template.render({}, request))
+        form = UserProfileForm(
+            initial={
+                'username': self.request.user.username,
+                'email': self.request.user.email,
+                'first_name': self.request.user.first_name,
+                'last_name': self.request.user.last_name,
+                'user_id': self.request.user.pk,
+            }
+        )
+        context = {
+            'form': form,
+        }
+        return HttpResponse(template.render(context, request))
+
+    def post(self, request, *args, **kwargs):
+        template = loader.get_template('session_manager/index.html')
+        form = UserProfileForm(request.POST)
+
+        if form.is_valid():
+            user = User.objects.get(pk=self.request.user.pk)
+            user.username = request.POST['username']
+            user.email = request.POST['email']
+            user.first_name = request.POST['first_name']
+            user.last_name = request.POST['last_name']
+            user.save()
+            messages.success(request, 'Profile updated.')
+            return redirect(reverse('session_manager_profile'))
+        else:
+            context = {
+                'form': form,
+            }
+            return HttpResponse(template.render(context, request))
+
 
 

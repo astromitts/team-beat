@@ -1,0 +1,5 @@
+{% extends 'base/project_base.html' %}
+{% block page_content %}
+	<h1 class="h1-smaller">{{header}}</h1>
+	{% include 'session_manager/generic_form.html' with form=form submit_text=submit_text additional_helptext=additional_helptext %}
+{% endblock %}

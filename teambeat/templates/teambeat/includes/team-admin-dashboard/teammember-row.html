@@ -1,0 +1,19 @@
+<tr class='teammember-row' id='teammember_{{teammember.pk}}'>
+	<td>{{teammember.first_name}}</td>
+	<td>{{teammember.last_name}}</td>
+	<td class="hide-on-small">{{teammember.email}}</td>
+	<td><button 
+		id="remove-teammember-{{teammember.pk}}"
+		class="js-modal-trigger btn btn-danger  float-right" 
+		data-modal-id="modal_teammember-remove"
+		data-teammember-id="{{teammember.pk}}"  
+		data-display-name="{{teammember.display_name}}"
+		data-js-handler="handelRemoveTeamMemberModal"
+		data-ajax-target="{% url 'team_admin_dashboard_api' team_uuid=team.uuid api_target='removeteammember' %}"
+		>Remove</button>
+		<form id="remove-teammember-{{teammember.pk}}">
+			{% csrf_token %}
+			<input type="hidden" id="teammember_id" name="teammember_id" value="{{teammember.pk}}" />
+		</form>
+	</td>
+</tr>
