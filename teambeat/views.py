@@ -214,7 +214,7 @@ class SetStatus(TeamBeatView):
         super(SetStatus, self).setup(request, *args, **kwargs)
         self.teammember = TeamMember.objects.get(
             team=self.team,
-            user=self.user
+            organization_user=self.user
         )
         self.template = loader.get_template('teambeat/set_status.html')
         self.context = {
