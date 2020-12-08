@@ -13,14 +13,11 @@ DATABASES = {
         'PORT': '5432'
     }
 }
-
-ALLOWED_HOSTS = []
-
 STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
 
 MIDDLEWARE_DEBUG = False
 
-HOST = ''
+HOST = 'https://team-beat.herokuapp.com/'
 
 SENDGRID_API_KEY = os.environ.get('SENDGRID_API_KEY')
 
