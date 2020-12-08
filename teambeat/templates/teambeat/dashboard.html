@@ -7,17 +7,6 @@
 	<script src="{% static 'js/dashboard/dashboard.js' %}"></script>
 {% endblock %}
 {% block page_content %}
-	<div class="row dashboard">
-		<div class="col">
-			<h2>My Status</h2>
-		</div>
-	</div>
-	<div class="row spacer_p5" id="myteams">
-		{% for teammember in myteams %}
-			{% include 'teambeat/includes/dashboard-team-card.html' with team=teammember.team teammember=teammember %}
-		{% endfor %}
-	</div>
-	<hr />
 	
 	{% if leadteams %}
 		<div class="row dashboard">
@@ -32,6 +21,18 @@
 		</div>
 		<hr />
 	{% endif %}
+	
+	<div class="row dashboard">
+		<div class="col">
+			<h2>My Status</h2>
+		</div>
+	</div>
+	<div class="row spacer_p5" id="myteams">
+		{% for teammember in myteams %}
+			{% include 'teambeat/includes/dashboard-team-card.html' with team=teammember.team teammember=teammember %}
+		{% endfor %}
+	</div>
+	<hr />
 
 	{% if adminteams %}
 		<div class="row dashboard">

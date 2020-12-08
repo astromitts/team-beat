@@ -13,26 +13,32 @@
 						<div class="adminteam-status_details as-table">
 							<div class="as-row as-header align-center bg-{{status.status}}">
 								<div class="as-cell adminteam-status_name">
-									<div>{{status.teammember.display_name}}</div>
-								</div>
-							</div>
-							<div class="as-row">
-								<div class="as-cell padding_p5">
-									<div class="spacer_1">{{status.status}}</div>
-									{% if status.additional_info_for_team %}
-										<div>
-											<div class="as-header">Additional infor for team</div>
-											{{status.additional_info_for_team}}
-										</div>
-									{% endif %}
-									{% if status.additional_info_for_lead %}
 									<div>
-										<div class="as-header">Additional infor for you</div>
-										{{status.additional_info_for_lead}}
+										{{status.teammember.display_name}}
+										<span class="screen-reader-context">
+											Teammember Status for {{status.teammember.display_name}}: {{status.status}}
+										</span> 
 									</div>
-									{% endif %}
 								</div>
 							</div>
+							{% if status.additional_info_for_lead or status.additional_info_for_team %}
+								<div class="as-row">
+									<div class="as-cell padding_p5">
+										{% if status.additional_info_for_team %}
+											<div>
+												<div class="as-header">Additional infor for team</div>
+												{{status.additional_info_for_team}}
+											</div>
+										{% endif %}
+										{% if status.additional_info_for_lead %}
+										<div>
+											<div class="as-header">Additional infor for you</div>
+											{{status.additional_info_for_lead}}
+										</div>
+										{% endif %}
+									</div>
+								</div>
+							{% endif %}
 						</div>
 					</div>	
 				</div>

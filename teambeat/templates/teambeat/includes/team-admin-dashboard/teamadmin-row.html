@@ -10,7 +10,7 @@
 			data-modal-id="modal_teammember-remove" 
 			data-js-handler="handelRemoveTeamAdminModal"
 			data-ajax-target="{% url 'team_admin_dashboard_api' team_uuid=team.uuid api_target='removeteamadmin' %}"
-			{% if admin.user == current_user %}disabled="disabled"{% endif %}
+			{% if admin.organization_user == current_user %}disabled="disabled"{% endif %}
 		>Remove</button>
 		<form id="remove-teamadmin-{{admin.pk}}">
 			{% csrf_token %}

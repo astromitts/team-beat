@@ -87,6 +87,10 @@ h2 {
   margin-top: 1.5rem;
 }
 
+.screen-reader-context {
+  display: none;
+}
+
 .js-data {
   display: none;
 }
@@ -116,18 +120,18 @@ h2 {
   text-align: center;
 }
 
+.bg {
+  background-color: #D4D4D4;
+}
 .bg-red {
   background-color: #EA6E6E;
 }
-
 .bg-yellow {
   background-color: #E6E668;
 }
-
 .bg-green {
   background-color: #6ECA6E;
 }
-
 .bg-null {
   background-color: #D4D4D4;
 }

@@ -1,7 +1,7 @@
 <div class="col-6">
 	<div class="dashboard-team status-border">
 		<div class="dashboard-team_status">
-			<div class="admin-team_name">{{team.name}}</div>
+			<div class="admin-team_name"><strong>{{team.name}}</strong></div>
 		</div>
 		<a class="dashboard-team_details dashboard-team_details_{{team.teamstatus}} bg-null" 
 			href="{% url 'team_admin_dashboard' team_uuid=team.uuid %}">

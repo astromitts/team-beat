@@ -185,7 +185,10 @@ class CreateTeam(TeamBeatView):
     def post(self, request, *args, **kwargs):
         form = self.form(request.POST)
         if form.is_valid():
-            team = Team(name=request.POST['name'])
+            team = Team(
+                name=request.POST['name'],
+                organization=self.organization
+            )
 
             if request.POST['creator_is_lead'] == 'Y':
                 team.team_lead = self.user
@@ -193,13 +196,13 @@ class CreateTeam(TeamBeatView):
 
             if request.POST['creator_is_member'] == 'Y':
                 team_member = TeamMember(
-                    user=self.request.user,
+                    organization_user=self.user,
                     team=team
                 )
                 team_member.save()
 
             team_admin = TeamAdmin(
-                user=self.request.user,
+                organization_user=self.user,
                 team=team
             )
             team_admin.save()
@@ -414,7 +417,7 @@ class TeamAdminDashboardAPI(TeamAdminView):
 
         elif api_target == 'removeteamadmin':
             teamadmin_qs = self.team.teamadmin_set.filter(
-                pk=request.POST['teamadmin_id']).exclude(user=self.user)
+                pk=request.POST['teamadmin_id']).exclude(organization_user=self.user)
             if teamadmin_qs.exists():
                 teamadmin_qs.first().delete()
                 self.context['status'] = 'success'

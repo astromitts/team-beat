@@ -97,9 +97,15 @@ h2 {
 #main-content {
 	margin-top: 1.5rem;
 }
+
+.screen-reader-context {
+	display: none;
+}
+
 .js-data {
 	display: none;
 }
+
 .hide-on-small {
 	display: none;
 	@media (min-width: #{$screen-md-min}) {
@@ -122,20 +128,23 @@ h2 {
 	text-align: center;
 }
 
-.bg-red {
-	background-color: $teambeat-red;
-}
+.bg {
+	background-color: $teambeat-gray;
+	&-red {
+		background-color: $teambeat-red;
+	}
 
-.bg-yellow {
-	background-color: $teambeat-yellow;
-}
+	&-yellow {
+		background-color: $teambeat-yellow;
+	}
 
-.bg-green {
-	background-color: $teambeat-green;
-}
+	&-green {
+		background-color: $teambeat-green;
+	}
 
-.bg-null {
-	background-color: $border-inactive;
+	&-null {
+		background-color: $teambeat-gray;
+	}
 }
 
 .as-table {
