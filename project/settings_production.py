@@ -22,4 +22,6 @@ MIDDLEWARE_DEBUG = False
 
 HOST = ''
 
-SENDGRID_API_KEY = os.environ['SENDGRID_API_KEY']
+SENDGRID_API_KEY = os.environ.get('SENDGRID_API_KEY')
+
+ALLOWED_HOSTS = ['team-beat.herokuapp.com', 'team-beat.app']

@@ -27,7 +27,7 @@
 		<nav class="navbar navbar-expand-sm bg-light navbar-light navbar-custom">
 			<div class="container">
 				<a class="navbar-brand" href="{% if user.is_authenticated %}{% url 'dashboard' %}{% else %}{% url 'session_manager_login' %}{% endif %}">
-					<img id="header-image" src="{% static 'site-images/teambeat-logo-shadow.png' %}" />
+					<img id="header-image" src="{% static 'site-images/teambeat-logo-crayon.png' %}" />
 				</a>
 				{% if user.is_authenticated %}
 					<span class="navbar-text"><a href="{%url 'session_manager_profile' %}">
