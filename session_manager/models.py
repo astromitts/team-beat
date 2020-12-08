@@ -45,7 +45,7 @@ class SessionManager(models.Model):
         return User.objects.get(pk=pk)
 
     @classmethod
-    def create_user(cls, email, first_name, last_name, password):
+    def create_user(cls, email, first_name, last_name, password=None):
         """ Create a new User instance, set the password and return the User object
         """
         new_user = User(
@@ -55,8 +55,9 @@ class SessionManager(models.Model):
             last_name=last_name,
         )
         new_user.save()
-        new_user.set_password(password)
-        new_user.save()
+        if password:
+            new_user.set_password(password)
+            new_user.save()
         return new_user
 
     @classmethod

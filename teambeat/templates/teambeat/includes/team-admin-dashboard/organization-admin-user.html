@@ -1,0 +1,32 @@
+<tr id="orguser-row-{{user.pk}}">
+	<td>
+		<input 
+			type="checkbox" 
+			class="form-control is-admin-toggle" 
+			id="admin-toggle-id-{{user.pk}}"
+			{% if user.is_organization_admin %}checked="checked"{% endif %}
+			{% if user == current_user %}disabled="disabled"{% endif %}>
+			<form id="form-admin-toggle-id-{{user.pk}}" action="{% url 'organization_admin_dashboard_api' api_target='toggleisadmin' %}">
+				{% csrf_token %}
+				<input type="hidden" id="is-admin-toggle-id-{{user.pk}}" name="orguser_id" value="{{user.pk}}" />
+			</form>
+	</td>
+	<td>{{user.display_name}}</td>
+	<td class="hide-on-small">{{user.email}}</td>
+	<td>
+		<button 
+			id="removeadmin-{{user.pk}}" 
+			class="js-modal-trigger btn btn-danger float-right" 
+			data-orguser-id="{{user.pk}}"  
+			data-display-name="{{user.display_name}}"
+			data-modal-id="modal_teammember-remove" 
+			data-js-handler="handelRemoveUserFromOrgModal"
+			data-ajax-target="{% url 'organization_admin_dashboard_api' api_target='removeuser' %}"
+			{% if user == current_user %}disabled="disabled"{% endif %}
+		>Remove</button>
+		<form id="remove-orguser-{{user.pk}}">
+			{% csrf_token %}
+			<input type="hidden" id="orguser_id-{{user.pk}}" name="orguser_id" value="{{user.pk}}" />
+		</form>
+	</td>
+</tr>

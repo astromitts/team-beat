@@ -6,7 +6,10 @@ from teambeat import views as app_views
 
 urlpatterns = [
     path('', app_views.Dashboard.as_view(), name='dashboard'),
-    path('select-organization/', app_views.SelectOrganization.as_view(), name='set_organization'),
+    path('organization/select/', app_views.SelectOrganization.as_view(), name='set_organization'),
+    path('organization/add-user/', app_views.AddUserToOrganization.as_view(), name='add_user_to_organization'),
+    path('organization/admin/', app_views.OrganizationAdminDashboard.as_view(), name='organization_admin_dashboard'),
+    path('organization/admin/api/<str:api_target>/', app_views.OrganizationAdminDashboardAPI.as_view(), name='organization_admin_dashboard_api'),
     path('api/dashboard/', app_views.DashboardAPI.as_view(), name='dashboard_refresh_api'),
     path('api/usersearch/', app_views.UserSearchAPI.as_view(), name='api_user_search'),
     path('teams/new/', app_views.CreateTeam.as_view(), name='teams_create'),

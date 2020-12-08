@@ -16,6 +16,8 @@ from teambeat.models import (
     TeamMemberStatus,
 )
 from teambeat.forms import (
+    AddUserEmailForm,
+    AddUserNameForm,
     TeamForm,
     SearchUsersForm,
     RemoveTeamMemberForm,
@@ -98,6 +100,121 @@ class TeamBeatView(View):
                     organization=self.organization,
                     uuid=kwargs['team_uuid']
                 )
+                request.session['current_team_id'] = str(self.team.uuid)
+
+
+class OrganizationAdminView(TeamBeatView):
+    def setup(self, request, *args, **kwargs):
+        super(OrganizationAdminView, self).setup(request, *args, **kwargs)
+        if not self.user.is_organization_admin:
+            self.context = {
+                'status_code': 403,
+                'error_message': (
+                    'Access denied for this page. You are not an admin for '
+                    'this organization'
+                ),
+            }
+            self.template = loader.get_template(settings.DEFAULT_ERROR_TEMPLATE)
+            self.status_code = 403
+        else:
+            self.status_code = 200
+
+
+class AddUserToOrganization(OrganizationAdminView):
+    def setup(self, request, *args, **kwargs):
+        super(AddUserToOrganization, self).setup(request, *args, **kwargs)
+
+        if self.status_code == 200:
+            self.template = loader.get_template('teambeat/generic_form.html')
+            self.form = AddUserEmailForm
+            self.context = {
+                'header': 'Add a user to organization "{}"'.format(self.organization.name),
+                'submit_text': 'Add user',
+                'additional_helptext': None,
+                'form': self.form()
+            }
+
+    def get(self, request, *args, **kwargs):
+        return HttpResponse(self.template.render(self.context, request))
+
+    def post(self, request, *args, **kwargs):
+        form = self.form(request.POST)
+        if form.is_valid():
+            if 'first_name' not in request.POST:
+                django_user = SessionManager.get_user_by_username(request.POST['email'])
+                if django_user:
+                    existing_org_user = OrganizationUser.objects.filter(
+                        organization=self.organization,
+                        user=django_user
+                    ).first()
+                    if existing_org_user and existing_org_user.active == True:
+                        messages.error(request, 'This user is already in your organization')
+                        self.context['form'] = form
+                        return HttpResponse(self.template.render(self.context, request))
+                    elif existing_org_user:
+                        existing_org_user.active = True
+                        existing_org_user.save()
+                        messages.success(request, 'Added {} to organization'.format(existing_org_user.display_name))
+                        if request.session.get('current_team_id'):
+                            return redirect(reverse('team_admin_dashboard', kwargs={'team_uuid': request.session.get('current_team_id')}))
+                        return redirect(reverse('organization_admin_dashboard'))
+                else:
+                    self.context['form'] = AddUserNameForm(initial={'email': request.POST['email']})
+                    return HttpResponse(self.template.render(self.context, request))
+            else:
+                django_user = SessionManager.create_user(
+                    email=request.POST['email'],
+                    first_name=request.POST['first_name'],
+                    last_name=request.POST['last_name']
+                )
+                org_user = OrganizationUser(
+                    organization=self.organization,
+                    user=django_user
+                )
+                org_user.save()
+                messages.success(request, 'Added {} to organization'.format(org_user.display_name))
+                if request.session.get('current_team_id'):
+                    return redirect(reverse('team_admin_dashboard', kwargs={'team_uuid': request.session.get('current_team_id')}))
+                return redirect(reverse('organization_admin_dashboard'))
+
+        self.context['form'] = form
+        return HttpResponse(self.template.render(self.context, request))
+
+
+class OrganizationAdminDashboard(OrganizationAdminView):
+    def setup(self, request, *args, **kwargs):
+        super(OrganizationAdminDashboard, self).setup(request, *args, **kwargs)
+
+        if self.status_code == 200:
+            request.session['current_team_id'] = None
+            self.template = loader.get_template('teambeat/organization-admin-dashboard.html')
+            self.context = {
+                'organization': self.organization,
+                'org_users': self.organization.organizationuser_set.filter(active=True).all(),
+                'current_user': self.user,
+            }
+
+    def get(self, request, *args, **kwargs):
+        return HttpResponse(self.template.render(self.context, request))
+
+class OrganizationAdminDashboardAPI(OrganizationAdminView):
+    def post(self, request, *args, **kwargs):
+        if kwargs['api_target'] == 'removeuser':
+            org_user = OrganizationUser.objects.get(pk=request.POST['orguser_id'])
+            org_user.active = False
+            org_user.teammember_set.all().update(active=False)
+            org_user.save()
+            context = {'status': 'success'}
+        if kwargs['api_target'] == 'toggleisadmin':
+            org_user = OrganizationUser.objects.get(pk=request.POST['orguser_id'])
+            if org_user.is_organization_admin:
+                org_user.is_organization_admin = False
+            else:
+                org_user.is_organization_admin = True
+            org_user.save()
+            context = {'status': 'success'}
+
+        return JsonResponse(context)
 
 
 class SelectOrganization(TeamBeatView):
@@ -128,12 +245,14 @@ class SelectOrganization(TeamBeatView):
         return redirect(reverse('dashboard'))
 
 
+
 class Dashboard(TeamBeatView):
     def get(self, request, *args, **kwargs):
         if not request.session.get('organization'):
             return redirect(reverse('set_organization'))
         template = loader.get_template('teambeat/dashboard.html')
         context = {
+            'org_user': self.user,
             'myteams': self.user.teammember_set.all(),
             'adminteams': self.user.teamadmin_set.all(),
             'leadteams': self.user.teamlead_set.all(),
@@ -361,19 +480,21 @@ class TeamAdminDashboardAPI(TeamAdminView):
         super(TeamAdminDashboardAPI, self).setup(request, *args, **kwargs)
         self.context = {
             'status_code': self.status_code,
-            'error_message': self.context.get('error_message'),
+            'errorMessage': self.context.get('error_message'),
             'status': ''
         }
 
     def _get_or_create_team_admin(self, org_user):
         team_admin = self.team.teamadmin_set.filter(organization_user=org_user).first()
+        created = False
         if not team_admin:
             team_admin = TeamAdmin(
                 organization_user=org_user,
                 team=self.team
             )
             team_admin.save()
-        return team_admin
+            created = True
+        return (team_admin, created)
 
     def post(self, request, *args, **kwargs):
         api_target = kwargs['api_target']
@@ -388,13 +509,13 @@ class TeamAdminDashboardAPI(TeamAdminView):
                 self.context['status'] = 'success'
             else:
                 self.context['status'] = 'error'
-                self.context['error_message'] = 'Could not complete request.'
+                self.context['errorMessage'] = 'Could not complete request: invalid form'
         elif api_target == 'addteammember':
                 org_user = OrganizationUser.objects.get(pk=request.POST['user_id'])
                 teammember_qs = self.team.teammember_set.filter(
                     organization_user=org_user)
                 if teammember_qs.exists() and teammember_qs.first().active:
-                    self.context['error_message']  = 'User already in team.'
+                    self.context['errorMessage']  = 'User already in team.'
                 else:
                     if teammember_qs.exists():
                         new_teammember = teammember_qs.first()
@@ -417,15 +538,19 @@ class TeamAdminDashboardAPI(TeamAdminView):
 
         elif api_target == 'addteamadmin':
                 org_user = OrganizationUser.objects.get(pk=request.POST['user_id'])
-                new_teamadmin = self._get_or_create_team_admin(org_user)
-                rendered_table_row = loader.render_to_string(
-                    'teambeat/includes/team-admin-dashboard/teamadmin-row.html',
-                    context={'admin': new_teamadmin, 'team': self.team,},
-                    request=request
-                )
-                self.context['status'] = 'success'
-                self.context['teamAdminId'] = new_teamadmin.pk
-                self.context['htmlResult'] = rendered_table_row
+                new_teamadmin, created = self._get_or_create_team_admin(org_user)
+                if created:
+                    rendered_table_row = loader.render_to_string(
+                        'teambeat/includes/team-admin-dashboard/teamadmin-row.html',
+                        context={'admin': new_teamadmin, 'team': self.team,},
+                        request=request
+                    )
+                    self.context['status'] = 'success'
+                    self.context['teamAdminId'] = new_teamadmin.pk
+                    self.context['htmlResult'] = rendered_table_row
+                else:
+                    self.context['status'] = 'error'
+                    self.context['errorMessage'] = 'Could not create team admin instance or user is already admin.'
 
         elif api_target == 'removeteamadmin':
             teamadmin_qs = self.team.teamadmin_set.filter(
@@ -435,7 +560,7 @@ class TeamAdminDashboardAPI(TeamAdminView):
                 self.context['status'] = 'success'
             else:
                 self.context['status'] = 'error'
-                self.context['error_message'] = (
+                self.context['errorMessage'] = (
                     'Admin user not found or is the current user'
                 )
 

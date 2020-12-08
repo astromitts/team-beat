@@ -13,6 +13,9 @@
         </form>
           <table id="search-results" style="display: none;">
           </table>
+          <div id="add-user-link">
+            No matching user found in this organization, try another search or <a href="{% url 'add_user_to_organization' %}">add a new user to your organization</a>.
+          </div>
       </div>
       <div class="modal-footer">
         <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>

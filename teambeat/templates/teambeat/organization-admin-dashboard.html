@@ -1,0 +1,26 @@
+{% extends 'base/project_base.html' %}
+{% load static apptags %}
+{% block extra_js %}
+		<script src="{% static 'js/modalHandler.js' %}"></script>
+		<script src="{% static 'js/dashboard/orgAdminDashboard.js' %}"></script>
+{% endblock %}
+{% block page_content %}
+<div class="row spacer_1">
+	<div class="col">
+		<table class="table">
+			<tr><th>admin</th><th colspan="100%">Members of Organization</th></tr>
+			{% for user in org_users %}
+				{% include 'teambeat/includes/team-admin-dashboard/organization-admin-user.html' %}
+			{% endfor %}
+		</table>
+	</div>
+</div>
+<div class="row spacer_1">
+	<div class="col">
+		<a class="btn btn-primary form-control" href="{% url 'add_user_to_organization' %}">Add user to organization</a>
+	</div>
+</div>
+
+{% include 'teambeat/modals/modal-remove-teammember.html' with from_str='organization' %}
+{% include 'teambeat/modals/modal-user-search.html' with form=user_search_form %}
+{% endblock %}

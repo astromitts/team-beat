@@ -8,14 +8,36 @@ function handleModalAjax(ajaxTargetUrl, method, formData) {
 		async: false,
 		success: function(data) {
 			postData = data;
+			if (postData.status == 'error') {
+				errorMessage(postData.errorMessage);
+			}
 		},
 		error: function () {
 			postData = {}
 			postData.status = 'error';
-			postData.error_message = 'Unable to complete request: unkown error';
+			postData.errorMessage = 'Unable to complete request: unkown error';
+			errorMessage(postData.errorMessage);
 		}
 	});
 	return postData;
+}
+
+function handelRemoveUserFromOrgModal(sourceButton, modalId) {
+	var orgUserID = sourceButton.attr('data-orguser-id');
+	var teamMemberName = sourceButton.attr('data-display-name');
+	var nameSpan = $('span#teammember-name');
+	var ajaxTargetUrl = sourceButton.attr('data-ajax-target');
+	nameSpan.html(teamMemberName);
+	$('#' + modalId).modal('show');
+
+	$('#js-remove-teammember').click(function executeRemoveTeamMember(){
+		var formData = $('form#remove-orguser-' + orgUserID).serialize();
+		postData = handleModalAjax(ajaxTargetUrl, 'POST', formData);
+		if (postData.status == 'success') {
+			$('tr#orguser-row-' + orgUserID).remove();
+		}
+		$('#' + modalId).modal('hide');
+	});
 }
 
 function handleChangeLeadOnTeam(userId, ajaxTargetUrl) {
@@ -80,7 +102,8 @@ function handleAddUserToTeam(userId, ajaxTargetUrl) {
 function clearUserSearch() {
 	var resultTable = $('table#search-results');
 	resultTable.html('');
-	$('input#id_email_address').val('');
+	$('input#id_search_term').val('');
+	$('#add-user-link').css('display', 'none');
 
 }
 
@@ -98,17 +121,21 @@ function handleUserSearchModal(sourceButton, modalId) {
 		var formData = $(this).serialize();
 		var searchResults = handleModalAjax(searchApiURL, 'GET', formData);
 		if (searchResults) {
-			searchResults.searchResult.forEach(function displayResult(user){
-				var rowHTML = '<tr><td>' + user.displayName + ' (' + user.email + ') </td><td><button class="btn btn-success js-handle-result" data-user-id="'+user.id+'">add</button></td></tr>';
-				resultTable.append(rowHTML);
-			});
-			resultTable.css('display', '');
-			$('button.js-handle-result').click(function(){
-				var userId = $(this).attr('data-user-id');
-				window[resultHandlerFunction](userId, resultHanlerUrl);
-				clearUserSearch();
-				$('#' + modalId).modal('hide');
-			});
+			if (searchResults.searchResult.length > 0) {
+				searchResults.searchResult.forEach(function displayResult(user){
+					var rowHTML = '<tr><td>' + user.displayName + ' (' + user.email + ') </td><td><button class="btn btn-success js-handle-result" data-user-id="'+user.id+'">add</button></td></tr>';
+					resultTable.append(rowHTML);
+				});
+				resultTable.css('display', '');
+				$('button.js-handle-result').click(function(){
+					var userId = $(this).attr('data-user-id');
+					window[resultHandlerFunction](userId, resultHanlerUrl);
+					clearUserSearch();
+					$('#' + modalId).modal('hide');
+				});
+			} else {
+				$('#add-user-link').css('display', '');
+			}
 		}
 	});
 }

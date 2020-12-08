@@ -16,6 +16,7 @@
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.1/jquery.min.js" > </script> 
     <script src="https://ajax.googleapis.com/ajax/libs/jqueryui/1.12.1/jquery-ui.min.js" > </script>
 	<script src="{% static 'vendors/bootstrap/js/bootstrap.min.js' %}"></script>
+	<script src="{% static 'js/message.js' %}"></script>
 	{% block extra_js %}{% endblock %}
 	<link href="{% static 'css/base.css' %}" rel="stylesheet">
 	{% block extra_css %}{% endblock %}
@@ -59,19 +60,17 @@
 	<div class="container">
 		<div id="main-content">
 		{% block messages %}
-			{% if messages %}
-				<div class="row">
-					<div class="col">
-					    {% for message in messages %}
-					    <div class="alert alert-{% if message.level_tag == 'error'%}danger{% else %}{{message.level_tag}}{% endif %} alert-dismissible fade show" role="alert">
-						 	<strong>{{message|safe}}</strong>
-						 	<button type="button" class="close" data-dismiss="alert" aria-label="Close">
-						 	<span aria-hidden="true">&times;</span>
-						</div>
-					    {% endfor %}
+			<div id="js-messages-row" class="row">
+				<div id="js-messages-col" class="col">
+				    {% for message in messages %}
+				    <div class="alert alert-{% if message.level_tag == 'error'%}danger{% else %}{{message.level_tag}}{% endif %} alert-dismissible fade show" role="alert">
+					 	<strong>{{message|safe}}</strong>
+					 	<button type="button" class="close" data-dismiss="alert" aria-label="Close">
+					 	<span aria-hidden="true">&times;</span>
 					</div>
+				    {% endfor %}
 				</div>
-				{% endif %}
+			</div>
 			{% endblock %}
 			{% block page_header %}
 				{% if organization %}

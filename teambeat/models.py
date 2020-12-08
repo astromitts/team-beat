@@ -44,6 +44,8 @@ class Organization(models.Model):
 class OrganizationUser(models.Model, DjangoUserMixin):
     organization = models.ForeignKey(Organization, on_delete=models.CASCADE)
     user = models.ForeignKey(User, on_delete=models.CASCADE)
+    is_organization_admin = models.BooleanField(default=False)
+    active = models.BooleanField(default=True)
 
     def __str__(self):
         return '{}: {}'.format(self.display_name, self. organization)

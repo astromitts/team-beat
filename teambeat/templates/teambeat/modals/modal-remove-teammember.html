@@ -8,7 +8,7 @@
         </button>
       </div>
       <div class="modal-body">
-        <p>Remove <span id='teammember-name'></span> from team?</p>
+        <p>Remove <span id='teammember-name'></span> from {% if from_str %}{{from_str}}{% else %}team{% endif %}?</p>
       </div>
       <div class="modal-footer">
         <button type="button" id="js-remove-teammember" class="btn btn-primary">Confirm</button>

@@ -95,6 +95,14 @@ h2 {
   display: none;
 }
 
+.hidden {
+  display: none;
+}
+
+.h1-smaller {
+  font-size: 1rem;
+}
+
 .hide-on-small {
   display: none;
 }

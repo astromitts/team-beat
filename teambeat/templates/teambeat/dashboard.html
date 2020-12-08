@@ -46,9 +46,17 @@
 			{% endfor %}
 		</div>
 	{% endif %}
-	<div class="row spacer_p5" id="newteam">
+	<div class="row spacer_1" id="newteam">
 		<div class="col">
 			<a href="{% url 'teams_create' %}"><button class="btn btn-primary form-control">New Team</button></a>
 		</div>
 	</div>
+
+	{% if org_user.is_organization_admin %}
+		<div class="row spacer_1" id="newteam">
+			<div class="col">
+				<a href="{% url 'organization_admin_dashboard' %}"><button class="btn btn-primary form-control">Organization Admin</button></a>
+			</div>
+		</div>
+	{% endif %}
 {% endblock %}

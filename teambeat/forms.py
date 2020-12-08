@@ -2,6 +2,7 @@ from django.forms import (
     BooleanField,
     CharField,
     EmailField,
+    EmailInput,
     Form,
     HiddenInput,
     IntegerField,
@@ -66,4 +67,19 @@ class SetOrganizationForm():
         organization_choices = [[uo.pk, uo.name] for uo in user_orgs]
         self.organization.widget.choice = organization_choices
 
+
+class AddUserEmailForm(Form):
+    # username = CharField(widget=TextInput(attrs={'class': 'form-control'}))
+    email = CharField(widget=EmailInput(attrs={'class': 'form-control'}))
+
+
+class AddUserNameForm(Form):
+    email = EmailField(widget=HiddenInput())
+    first_name = CharField(widget=TextInput(attrs={'class': 'form-control'}))
+    last_name = CharField(widget=TextInput(attrs={'class': 'form-control'}))
+
+    class Meta:
+        widgets = {
+            'email': HiddenInput()
+        }
 
