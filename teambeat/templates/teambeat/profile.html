@@ -1,0 +1,28 @@
+{% extends 'base/project_base.html' %}
+{% block page_content %}
+	<div class="row spacer_1">
+		<div class="col">
+			<a href="{% url 'session_manager_profile_reset_password' %}" class="btn btn-primary">Reset password</a>
+		</div>
+		<div>
+			<a href="{% url 'session_manager_logout' %}" class="btn btn-danger">Log out</a>
+		</div>
+	</div>
+
+	<div class="row">
+		<div class="col">
+			<form method="POST" action="">
+				{% csrf_token %}
+				<table class="table">
+					{{profile_form.as_table}}
+				<tr>
+					<td colspan="100%"><input type="submit" class="btn btn-primary float-right" value="Update Profile" name="update-profile" /></td>
+				</tr>
+			</form>
+		</div>
+	</div>
+	<hr />
+	{% include 'teambeat/includes/forms/organization_form.html' %}
+
+{% endblock %}
+

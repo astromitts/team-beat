@@ -6,6 +6,7 @@ from teambeat import views as app_views
 
 urlpatterns = [
     path('', app_views.Dashboard.as_view(), name='dashboard'),
+    path('select-organization/', app_views.SelectOrganization.as_view(), name='set_organization'),
     path('api/dashboard/', app_views.DashboardAPI.as_view(), name='dashboard_refresh_api'),
     path('api/usersearch/', app_views.UserSearchAPI.as_view(), name='api_user_search'),
     path('teams/new/', app_views.CreateTeam.as_view(), name='teams_create'),
@@ -19,5 +20,5 @@ urlpatterns = [
     path('logout/', LogOutUserView.as_view(), name='session_manager_logout'),
     path('resetpassword/', ResetPasswordWithTokenView.as_view(), name='session_manager_token_reset_password'),
     path('profile/resetpassword/', ResetPasswordFromProfileView.as_view(), name='session_manager_profile_reset_password'),
-    path('profile/', Index.as_view(), name='session_manager_profile'),
+    path('profile/', app_views.Profile.as_view(), name='session_manager_profile'),
 ]

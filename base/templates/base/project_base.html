@@ -95,6 +95,11 @@
 				</div>
 				{% endif %}
 			{% endblock %}
+			{% block page_header %}
+				{% if organization %}
+					<h1>{{organization.name}}</h1>
+				{% endif %}
+			{% endblock %}
 			{% block page_content %}{% endblock %}
 		</div>
 	</div>

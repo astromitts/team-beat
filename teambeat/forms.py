@@ -1,12 +1,14 @@
 from django.forms import (
-    Form,
-    ModelForm,
-    TextInput,
     BooleanField,
-    RadioSelect,
+    CharField,
     EmailField,
-    IntegerField,
+    Form,
     HiddenInput,
+    IntegerField,
+    ModelForm,
+    RadioSelect,
+    Select,
+    TextInput,
 )
 from teambeat.models import Team
 
@@ -32,11 +34,12 @@ class TeamForm(ModelForm):
 
 
 class SearchUsersForm(Form):
-    email_address = EmailField()
+    search_term = CharField(label='name or email')
     class Meta:
         widgets = {
-            'email_address': TextInput(attrs={'class': 'form-control'}),
+            'search_term': TextInput(attrs={'class': 'form-control'}),
         }
+
 
 class RemoveTeamMemberForm(Form):
     teammember_id = IntegerField(widget=HiddenInput())
@@ -44,3 +47,23 @@ class RemoveTeamMemberForm(Form):
         widgets = {
             'teammember_id': HiddenInput()
         }
+
+
+class SetOrganizationForm():
+    organization = CharField(
+        widget=Select(
+            choices=[],
+            attrs={'class': 'form-control'}
+        )
+    )
+
+    class Meta:
+        fields = ['organization']
+
+    def __init__(self, user, *args, **kwargs):
+        super(SetOrganizationForm, self).__init__(*args, **kwargs)
+        user_orgs = user.organization_set.all()
+        organization_choices = [[uo.pk, uo.name] for uo in user_orgs]
+        self.organization.widget.choice = organization_choices
+
+

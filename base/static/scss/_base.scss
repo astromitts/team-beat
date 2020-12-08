@@ -34,7 +34,9 @@ ul.errorlist {
 		color: $teambeat-purple !important;
 	}
 	a.nav-link {
-		margin-top: $nav-link-margin;
+		@media (min-width: #{$screen-md-min}) {	
+			margin-top: $nav-link-margin;
+		}
 	}
 }
 
@@ -47,7 +49,9 @@ img#header-image {
 }
 img#profile-image {
 	width: 4rem;
-	margin-top: $nav-link-margin;
+	@media (min-width: #{$screen-md-min}) {	
+		margin-top: $nav-link-margin;
+	}
 }
 ol.breadcrumb {
 	background-color: #FFFFFF;

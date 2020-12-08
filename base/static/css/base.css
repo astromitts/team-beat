@@ -17,8 +17,10 @@ ul.errorlist {
   font-weight: bold;
   color: #712488 !important;
 }
-.navbar-custom a.nav-link {
-  margin-top: 1.5rem;
+@media (min-width: 768px) {
+  .navbar-custom a.nav-link {
+    margin-top: 1.5rem;
+  }
 }
 
 img#header-image {
@@ -32,7 +34,11 @@ img#header-image {
 
 img#profile-image {
   width: 4rem;
-  margin-top: 1.5rem;
+}
+@media (min-width: 768px) {
+  img#profile-image {
+    margin-top: 1.5rem;
+  }
 }
 
 ol.breadcrumb {
