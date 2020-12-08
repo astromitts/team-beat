@@ -47,7 +47,8 @@ class Profile(View):
         context = {
             'profile_form': profile_form,
             'user_organizations': self.user.organizationuser_set.all(),
-            'current_organization': self.current_organization
+            'current_organization': self.current_organization,
+            'org_select_submit_text': 'Switch Organization'
         }
         return HttpResponse(self.template.render(context, request))
 
@@ -57,7 +58,8 @@ class Profile(View):
         context = {
             'profile_form': profile_form,
             'user_organizations': self.user.organizationuser_set.all(),
-            'current_organization': self.current_organization
+            'current_organization': self.current_organization,
+            'org_select_submit_text': 'Switch Organization'
         }
         if 'update-profile' in request.POST:
             if profile_form.is_valid():
@@ -98,22 +100,32 @@ class TeamBeatView(View):
                 )
 
 
-class SelectOrganization(View):
+class SelectOrganization(TeamBeatView):
+    def setup(self, request, *args, **kwargs):
+        super(SelectOrganization, self).setup(request, *args, **kwargs)
+        self.context = {
+            'user_organizations': request.user.organizationuser_set.all(),
+            'current_organization': None,
+            'org_select_submit_text': 'Select Organization'
+        }
+
+        self.template = loader.get_template('teambeat/set_organization.html')
+
     def get(self, request, *args, **kwargs):
-        user = self.request.user
-        user_organizations = OrganizationUser.objects.filter(user=user)
+        user_organizations = OrganizationUser.objects.filter(user=request.user)
         if user_organizations.count() == 1:
             request.session['organization'] = str(
                 user_organizations.first().organization.uuid
             )
             return redirect('dashboard')
         else:
-            template = loader.get_template('teambeat/generic_form.html')
-            form = SetOrganizationForm()
-            context = {
-                'form': form,
-            }
-            return HttpResponse(template.render(context, request))
+            return HttpResponse(self.template.render(self.context, request))
+
+    def post(self, request, *args, **kwargs):
+        org_id = request.POST['organization_id']
+        organization = Organization.objects.get(pk=org_id)
+        request.session['organization'] = str(organization.uuid)
+        return redirect(reverse('dashboard'))
 
 
 class Dashboard(TeamBeatView):

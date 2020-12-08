@@ -6,7 +6,7 @@
 				<tr>
 					<td>Organization: </td>
 					<td>
-						<select id="organization_id" name="organization_id">
+						<select id="organization_id" name="organization_id" class="form-control float-right">
 							<option></option>
 							{% for u_org in user_organizations %}
 								<option 
@@ -20,7 +20,9 @@
 							{% endfor %}
 						</select>
 					</td>
-					<td><input type="submit" class="btn btn-primary float-right" value="Switch Organization" name="switch-organization" /></td>
+				</tr>
+				<tr>
+					<td colspan="100%"><input type="submit" class="btn btn-primary float-right" value="{{org_select_submit_text}}" name="switch-organization" /></td>
 				</tr>
 			</table>
 		</form>

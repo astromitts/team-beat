@@ -72,7 +72,6 @@ class LoginUserView(View):
                 if token.is_valid:
                     # a valid token/user combination was given, so log in and delete the token
                     login(request, token.user)
-                    messages.success(request, 'Log in successful.')
                     token.delete()
                     request.session['user_is_authenticated'] = True
                     return redirect(reverse(settings.LOGIN_SUCCESS_REDIRECT))
@@ -109,7 +108,6 @@ class LoginUserView(View):
                 return HttpResponse(self.template.render(self.context, request))
             else:
                 login(request, user)
-                messages.success(request, 'Log in successful.')
                 request.session['user_is_authenticated'] = True
                 if request.session.get('login_redirect_from'):
                     return redirect(request.session.get('login_redirect_from'))

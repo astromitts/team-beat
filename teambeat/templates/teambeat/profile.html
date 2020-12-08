@@ -4,8 +4,8 @@
 		<div class="col">
 			<a href="{% url 'session_manager_profile_reset_password' %}" class="btn btn-primary">Reset password</a>
 		</div>
-		<div>
-			<a href="{% url 'session_manager_logout' %}" class="btn btn-danger">Log out</a>
+		<div class="col">
+			<a href="{% url 'session_manager_logout' %}" class="btn btn-danger float-right">Log out</a>
 		</div>
 	</div>
 
@@ -23,6 +23,6 @@
 	</div>
 	<hr />
 	{% include 'teambeat/includes/forms/organization_form.html' %}
-
+	<div class="spacer_1"></div>
 {% endblock %}
 
