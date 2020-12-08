@@ -24,4 +24,4 @@ HOST = ''
 
 SENDGRID_API_KEY = os.environ.get('SENDGRID_API_KEY')
 
-ALLOWED_HOSTS = ['team-beat.herokuapp.com', 'team-beat.app']
+ALLOWED_HOSTS = ['team-beat.herokuapp.com', 'herokuapp.com', 'www.team-beat.app']
