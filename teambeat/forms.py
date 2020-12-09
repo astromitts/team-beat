@@ -11,7 +11,19 @@ from django.forms import (
     Select,
     TextInput,
 )
-from teambeat.models import Team
+from django.core.exceptions import ValidationError
+
+from teambeat.models import Team, Organization
+
+
+class CreateOrganizationForm(Form):
+    organization_name = CharField(widget=TextInput(attrs={'class': 'form-control'}))
+
+    def clean(self):
+        super(CreateOrganizationForm, self).clean()
+        data = self.cleaned_data
+        if Organization.objects.filter(name=data['organization_name']):
+            raise ValidationError('An organization with this name already exists')
 
 
 class TeamForm(ModelForm):

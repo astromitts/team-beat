@@ -6,6 +6,7 @@ from teambeat import views as app_views
 
 urlpatterns = [
     path('', app_views.Dashboard.as_view(), name='dashboard'),
+    path('organization/new/', app_views.CreateOrganization.as_view(), name='create_organization'),
     path('organization/select/', app_views.SelectOrganization.as_view(), name='set_organization'),
     path('organization/add-user/', app_views.AddUserToOrganization.as_view(), name='add_user_to_organization'),
     path('organization/admin/', app_views.OrganizationAdminDashboard.as_view(), name='organization_admin_dashboard'),

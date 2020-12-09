@@ -18,6 +18,7 @@ from teambeat.models import (
 from teambeat.forms import (
     AddUserEmailForm,
     AddUserNameForm,
+    CreateOrganizationForm,
     TeamForm,
     SearchUsersForm,
     RemoveTeamMemberForm,
@@ -33,8 +34,11 @@ class Profile(View):
         super(Profile, self).setup(request, *args, **kwargs)
         self.user = request.user
         self.template = loader.get_template('teambeat/profile.html')
-        self.current_organization = Organization.objects.filter(
-            uuid=request.session['organization']).first()
+        if request.session.get('organization'):
+            self.current_organization = Organization.objects.filter(
+                uuid=request.session['organization']).first()
+        else:
+            self.current_organization = None
 
     def get(self, request, *args, **kwargs):
         profile_form = UserProfileForm(
@@ -83,6 +87,45 @@ class Profile(View):
             return redirect(reverse('session_manager_profile'))
 
         return HttpResponse(self.template.render(context, request))
+
+
+class CreateOrganization(View):
+    def setup(self, request, *args, **kwargs):
+        super(CreateOrganization, self).setup(request, *args, **kwargs)
+        self.user = request.user
+        self.template = loader.get_template('teambeat/generic_form.html')
+        self.form = CreateOrganizationForm
+        self.context = {
+            'header': 'Create a New Organization',
+            'submit_text': 'Submit',
+            'additional_helptext': None,
+            'form': self.form()
+        }
+
+    def get(self, request, *args, **kwargs):
+        return HttpResponse(self.template.render(self.context, request))
+
+    def post(self, request, *args, **kwargs):
+        form = self.form(request.POST)
+        if form.is_valid():
+            new_organization = Organization(name=request.POST['organization_name'])
+            new_organization.save()
+            new_organization.admins.add(self.user)
+            new_organization.save()
+            org_user = OrganizationUser(
+                user=self.user,
+                organization=new_organization,
+                is_organization_admin=True
+            )
+            org_user.save()
+            request.session['organization'] = str(new_organization.uuid)
+            messages.success(
+                request,
+                'Created new organization "{}"'.format(new_organization.name)
+            )
+            return redirect(reverse('organization_admin_dashboard'))
+        self.context['form'] = form
+        return HttpResponse(self.template.render(self.context, request))
 
 
 class TeamBeatView(View):
@@ -138,9 +181,15 @@ class AddUserToOrganization(OrganizationAdminView):
         return HttpResponse(self.template.render(self.context, request))
 
     def post(self, request, *args, **kwargs):
-        form = self.form(request.POST)
+        if 'first_name' in request.POST:
+            form = AddUserNameForm(request.POST)
+            stage = 2
+        else:
+            form = AddUserEmailForm(request.POST)
+            stage = 1
+
         if form.is_valid():
-            if 'first_name' not in request.POST:
+            if stage == 1:
                 django_user = SessionManager.get_user_by_username(request.POST['email'])
                 if django_user:
                     existing_org_user = OrganizationUser.objects.filter(
@@ -155,9 +204,16 @@ class AddUserToOrganization(OrganizationAdminView):
                         existing_org_user.active = True
                         existing_org_user.save()
                         messages.success(request, 'Added {} to organization'.format(existing_org_user.display_name))
-                        if request.session.get('current_team_id'):
-                            return redirect(reverse('team_admin_dashboard', kwargs={'team_uuid': request.session.get('current_team_id')}))
-                        return redirect(reverse('organization_admin_dashboard'))
+                    else:
+                        new_org_user = OrganizationUser(
+                            organization=self.organization,
+                            user=django_user
+                        )
+                        new_org_user.save()
+                        messages.success(request, 'Added {} to organization'.format(new_org_user.display_name))
+                    if request.session.get('current_team_id'):
+                        return redirect(reverse('team_admin_dashboard', kwargs={'team_uuid': request.session.get('current_team_id')}))
+                    return redirect(reverse('organization_admin_dashboard'))
                 else:
                     self.context['form'] = AddUserNameForm(initial={'email': request.POST['email']})
                     return HttpResponse(self.template.render(self.context, request))
@@ -209,8 +265,12 @@ class OrganizationAdminDashboardAPI(OrganizationAdminView):
             org_user = OrganizationUser.objects.get(pk=request.POST['orguser_id'])
             if org_user.is_organization_admin:
                 org_user.is_organization_admin = False
+                self.organization.admins.remove(org_user.user)
+                self.organization.save()
             else:
                 org_user.is_organization_admin = True
+                self.organization.admins.add(org_user.user)
+                self.organization.save()
             org_user.save()
             context = {'status': 'success'}
 
