@@ -1,0 +1,19 @@
+<tr class='invitee-row' id='invitee-row-{{invitee.pk}}'>
+	<td>{{invitee.first_name}}</td>
+	<td>{{invitee.last_name}}</td>
+	<td class="hide-on-small">{{invitee.email}}</td>
+	<td><button 
+		id="remove-invitee-{{invitee.pk}}"
+		class="js-modal-trigger btn btn-danger  float-right" 
+		data-modal-id="modal_teammember-remove"
+		data-invitee-id="{{invitee.pk}}"  
+		data-display-name="{{invitee.display_name}}"
+		data-js-handler="handelRemoveInvitationFromOrgModal"
+		data-ajax-target="{% url 'organization_admin_dashboard_api' api_target='cancelinvitation' %}"
+		>Cancel<span class="hide-on-small">&nbsp;Invitation</span></button>
+		<form id="remove-invitee-{{invitee.pk}}">
+			{% csrf_token %}
+			<input type="hidden" id="invitee_id" name="invitee_id" value="{{invitee.pk}}" />
+		</form>
+	</td>
+</tr>

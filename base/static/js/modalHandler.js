@@ -22,6 +22,24 @@ function handleModalAjax(ajaxTargetUrl, method, formData) {
 	return postData;
 }
 
+function handelRemoveInvitationFromOrgModal(sourceButton, modalId) {
+	var orgInviteeID = sourceButton.attr('data-invitee-id');
+	var inviteeName = sourceButton.attr('data-display-name');
+	var nameSpan = $('span#teammember-name');
+	var ajaxTargetUrl = sourceButton.attr('data-ajax-target');
+	nameSpan.html(inviteeName);
+	$('#' + modalId).modal('show');
+
+	$('#js-remove-teammember').click(function executeRemoveInvitation(){
+		var formData = $('form#remove-invitee-' + orgInviteeID).serialize();
+		postData = handleModalAjax(ajaxTargetUrl, 'POST', formData);
+		if (postData.status == 'success') {
+			$('tr#invitee-row-' + orgInviteeID).remove();
+		}
+		$('#' + modalId).modal('hide');
+	});
+}
+
 function handelRemoveUserFromOrgModal(sourceButton, modalId) {
 	var orgUserID = sourceButton.attr('data-orguser-id');
 	var teamMemberName = sourceButton.attr('data-display-name');

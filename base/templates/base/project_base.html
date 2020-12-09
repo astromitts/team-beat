@@ -31,7 +31,8 @@
 				</a>
 				{% if user.is_authenticated %}
 					<span class="navbar-text"><a href="{%url 'session_manager_profile' %}">
-						<img id="profile-image" src="{% static 'site-images/profile-icon.png' %}" />
+						<img id="profile-image" 
+							src="{% if has_alerts %}{% static 'site-images/profile-icon-alert.png' %}{% else %}{% static 'site-images/profile-icon.png' %}{% endif %}" />
 					</a></span>
 				{% else %}
 					<span class="navbar-text"><a href="{%url 'session_manager_login' %}">

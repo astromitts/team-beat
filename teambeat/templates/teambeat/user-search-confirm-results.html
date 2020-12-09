@@ -1,0 +1,34 @@
+{% extends 'base/project_base.html' %}
+{% block page_content %}
+	{% if search_result_users %}
+		<div class="row">
+			<table class="table">
+			{% for user in search_result_users %}
+				<tr>
+					<td>{{user.first_name}}</td>
+					<td>{{user.last_name}}</td>
+					<td>{{user.email}}</td>
+					<td>
+						<form method="POST">
+							{% csrf_token %}
+							<input type="hidden" name="email" value="{{user.email}}" />
+							<input type="submit" class="btn btn-success float-right" id="confirmed_invitation" name="confirmed_invitation" value="Invite user" />
+						</form>
+					</td>
+				</tr>
+			{% endfor %}
+			<tr>
+				<td colspan="100%"><a class="btn btn-danger float-right" href="{% url 'add_user_to_organization' %}">Back to user search</a></td>
+			</tr>
+			</table>
+		</div>
+	{% else %}
+		<div class="row alert alert-danger">
+			No results found
+		</div>
+	{% endif %}
+	<div class="row">
+		<h2>If you cannot find who you are looking for, send them an invitation:</h2>
+	</div>
+	{% include 'session_manager/generic_form.html' with form=form submit_text='Invite New User' additional_helptext=additional_helptext %}
+{% endblock %}

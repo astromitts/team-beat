@@ -80,18 +80,5 @@ class SetOrganizationForm():
         self.organization.widget.choice = organization_choices
 
 
-class AddUserEmailForm(Form):
-    # username = CharField(widget=TextInput(attrs={'class': 'form-control'}))
-    email = CharField(widget=EmailInput(attrs={'class': 'form-control'}))
-
-
-class AddUserNameForm(Form):
-    email = EmailField(widget=HiddenInput())
-    first_name = CharField(widget=TextInput(attrs={'class': 'form-control'}))
-    last_name = CharField(widget=TextInput(attrs={'class': 'form-control'}))
-
-    class Meta:
-        widgets = {
-            'email': HiddenInput()
-        }
-
+class InviteUserForm(Form):
+    email = EmailField(widget=EmailInput(attrs={'class': 'form-control'}))

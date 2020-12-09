@@ -21,6 +21,15 @@
 	</div>
 </div>
 
+{% if invited_users.exists %}
+	<div class="row spacer_1">
+		<table class="table">
+			{% for invitee in invited_users.all %}
+				{% include 'teambeat/includes/team-admin-dashboard/invited-user-row.html' %}
+			{% endfor %}
+		</table>
+	</div>
+{% endif %}
+
 {% include 'teambeat/modals/modal-remove-teammember.html' with from_str='organization' %}
-{% include 'teambeat/modals/modal-user-search.html' with form=user_search_form %}
 {% endblock %}

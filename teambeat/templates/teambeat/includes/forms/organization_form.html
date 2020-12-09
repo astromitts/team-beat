@@ -1,36 +1,44 @@
 <div class="row">
 	<div class="col">
-		<form method="POST" action="">
-			{% csrf_token %}
-			<table class="table">
-				<tr>
-					<td>Organization: </td>
-					<td>
-						<select id="organization_id" name="organization_id" class="form-control float-right">
-							<option></option>
-							{% for u_org in user_organizations %}
-								<option 
-									value="{{u_org.organization.pk}}"
-									{% if u_org.organization == current_organization %}
-									selected="selected"
-									{% endif %}
-									>
-									{{u_org.organization.name}}
-								</option>
-							{% endfor %}
-						</select>
-					</td>
-				</tr>
-				<tr>
-					<td colspan="100%"><input type="submit" class="btn btn-primary float-right" value="{{org_select_submit_text}}" name="switch-organization" /></td>
-				</tr>
-			</table>
-		</form>
+		{% if user_organizations %}
+			<form method="POST" action="">
+				{% csrf_token %}
+				<table class="table">
+					<tr>
+						<td>Organization: </td>
+						<td>
+							<select id="organization_id" name="organization_id" class="form-control float-right">
+								<option></option>
+								{% for u_org in user_organizations %}
+									<option 
+										value="{{u_org.organization.pk}}"
+										{% if u_org.organization == current_organization %}
+										selected="selected"
+										{% endif %}
+										>
+										{{u_org.organization.name}}
+									</option>
+								{% endfor %}
+							</select>
+						</td>
+					</tr>
+					<tr>
+						<td colspan="100%"><input type="submit" class="btn btn-primary float-right" value="{{org_select_submit_text}}" name="switch-organization" /></td>
+					</tr>
+				</table>
+			</form>
+		{% else %}
+		<div class="alert alert-dark" role="alert">
+			You don't belong to any organizations yet. You can <a href="{% url 'create_organization' %}">create a new one now</a>, or contact an organization admin to be added to one.
+		</div>
+		{% endif %}
 	</div>
 </div>
-<hr />
+
+{% if user_organizations %}
 <div class="row">
 	<div class="col">
 		<a href="{% url 'create_organization' %}"><button class="btn btn-success">Create a new Organization</button></a>
 	</div>
 </div>
+{% endif %}

@@ -2,6 +2,8 @@ from django.contrib.auth.models import User
 from django.db import models
 from django.db.models import Q
 
+from session_manager.mailer import send_email
+
 from datetime import datetime
 import uuid
 
@@ -40,6 +42,38 @@ class Organization(models.Model):
             self.uuid
         )
 
+    def send_app_invitation_email(self, _to, _from):
+        email_type = 'App Invitation'
+        to_email = _to.email
+        from_email = _from.email
+        subject = '{} {} has invited you to join {} on Teambeat'.format(
+            _from.first_name, _from.last_name, self.name
+        )
+        body = 'Click to accept invitation'
+        send_email(
+            email_type,
+            to_email,
+            from_email,
+            subject,
+            body
+        )
+
+    def send_org_invitation_email(self, _to, _from):
+        email_type = 'Organization Invitation'
+        to_email = _to.email
+        from_email = _from.email
+        subject = '{} {} has invited you to join {} on Teambeat'.format(
+            _from.first_name, _from.last_name, self.name
+        )
+        body = 'Click to accept invitation'
+        send_email(
+            email_type,
+            to_email,
+            from_email,
+            subject,
+            body
+        )
+
 
 class OrganizationUser(models.Model, DjangoUserMixin):
     organization = models.ForeignKey(Organization, on_delete=models.CASCADE)
@@ -49,6 +83,11 @@ class OrganizationUser(models.Model, DjangoUserMixin):
 
     def __str__(self):
         return '{}: {}'.format(self.display_name, self. organization)
+
+    @property
+    def teamlead_teams(self):
+        return self.organization.team_set.filter(team_lead=self).all()
+
 
     @classmethod
     def search(cls, organization, search_term):
@@ -70,6 +109,15 @@ class OrganizationUser(models.Model, DjangoUserMixin):
             )
         return filter_qs.all()
 
+
+class OrganizationInvitation(models.Model, DjangoUserMixin):
+    organization = models.ForeignKey(Organization, on_delete=models.CASCADE)
+    user = models.ForeignKey(User, on_delete=models.CASCADE)
+    uuid = models.UUIDField(default=uuid.uuid4, editable=False)
+
+    def __str__(self):
+        return '<OrganizationInvitation {}: {}>'.format(
+            self.organization.name, self.display_name)
 
 
 class Team(models.Model):
@@ -168,9 +216,6 @@ class TeamMember(models.Model):
     @property
     def display_name(self):
         return '{} {}'.format(self.first_name, self.last_name)
-
-
-
 
 
 class TeamAdmin(models.Model, DjangoUserMixin):

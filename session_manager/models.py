@@ -1,6 +1,8 @@
 from django.conf import settings
 from django.contrib.auth.models import User
 from django.db import models
+from django.db.models import Q
+
 from django.urls import reverse
 
 from datetime import datetime, timedelta
@@ -34,9 +36,31 @@ class SessionManager(models.Model):
 
     @classmethod
     def search(cls, email):
-        """ Retrieve User if one with a matching username exists
+        """ Retrieve User if one with a matching email exists
         """
         return User.objects.filter(email__icontains=email).all()
+
+    @classmethod
+    def full_search(cls, search_term):
+        """ Retrieve User if one with a matching username exists
+        """
+        filter_qs = User.objects
+        if '@' in search_term:
+            filter_qs = filter_qs.filter(email__icontains=search_term)
+        elif ' ' in search_term:
+            search_names = search_term.split(' ')
+            first_name = search_names[0]
+            last_name = ' '.join(search_names[1:])
+            filter_qs = filter_qs.filter(
+                Q(first_name__icontains=first_name)|
+                Q(last_name__icontains=last_name)
+            )
+        else:
+            filter_qs = filter_qs.filter(
+                Q(first_name__icontains=search_term)|
+                Q(last_name__icontains=search_term)
+            )
+        return filter_qs.all()
 
     @classmethod
     def get_user_by_id(cls, pk):
@@ -45,7 +69,7 @@ class SessionManager(models.Model):
         return User.objects.get(pk=pk)
 
     @classmethod
-    def create_user(cls, email, first_name, last_name, password=None):
+    def create_user(cls, email, first_name=' ', last_name=' ', password=None):
         """ Create a new User instance, set the password and return the User object
         """
         new_user = User(
@@ -159,3 +183,18 @@ class UserToken(models.Model):
             return True
         else:
             return False
+
+
+class EmailLog(models.Model):
+    email_type = models.CharField(max_length=50)
+    to_email = models.EmailField()
+    from_email = models.EmailField()
+    subject = models.CharField(max_length=300)
+    body = models.TextField()
+
+    def __str__(self):
+        return '<EmailLog {}: type "{}" to "{}">'.format(
+            self.pk,
+            self.email_type,
+            self.to_email
+        )
